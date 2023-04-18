@@ -10,7 +10,7 @@ import java.text.DateFormat
 import java.text.SimpleDateFormat
 
 
-class RepoAdaptor(private val listItems: List<Repository>) :
+class RepoAdaptor(private val listItems: List<Repository>, val clickListener:CardEventListener) :
     RecyclerView.Adapter<RepoAdaptor.RepoViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RepoViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -20,7 +20,7 @@ class RepoAdaptor(private val listItems: List<Repository>) :
 
     override fun onBindViewHolder(holder: RepoViewHolder, position: Int) {
         val repo = listItems[position]
-       holder.bind(repo)
+       holder.bind(repo,clickListener)
     }
 
     override fun getItemCount(): Int {
@@ -28,7 +28,7 @@ class RepoAdaptor(private val listItems: List<Repository>) :
     }
 
     class RepoViewHolder(private val binding: CardRepoBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(data: Repository) {
+        fun bind(data: Repository,  clickListener:CardEventListener) {
             binding.repoNameTextView.text = (if(data.name.isNullOrEmpty())"-" else data.name).toString()
             binding.starsTextView.text = data.stars.toString()
             binding.descriptionTextView.text = (if(data.description.isNullOrEmpty())"-" else data.description).toString()
@@ -39,6 +39,9 @@ class RepoAdaptor(private val listItems: List<Repository>) :
             val updDate=dateFormat.format(data.updatedAt)
             binding.updatedAt.text= "updatedAt: $updDate"
             Picasso.get().load(data.owner.avatarUrl).into(binding.avatarImageView)
+            binding.rootCard.setOnClickListener {
+                clickListener.onCardClicked(data)
+            }
         }
     }
 }

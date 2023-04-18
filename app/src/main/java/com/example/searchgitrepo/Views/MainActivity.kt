@@ -19,7 +19,7 @@ import com.example.searchgitrepo.Utils.Resource
 import com.example.searchgitrepo.databinding.ActivityMainBinding
 import com.example.searchgitrepo.viewmodels.MainViewmodel
 
-class MainActivity : AppCompatActivity(R.layout.activity_main) {
+class MainActivity : AppCompatActivity(R.layout.activity_main) , CardEventListener {
 
 private lateinit var binding: ActivityMainBinding
     private lateinit var viewModel: MainViewmodel
@@ -42,7 +42,7 @@ private lateinit var binding: ActivityMainBinding
 
     private fun initViews() {
         recyclerView = binding.recyclerView
-        repoAdaptor = repoList?.let { RepoAdaptor(it) }
+        repoAdaptor = repoList?.let { RepoAdaptor(it,this) }
         recyclerView?.adapter = repoAdaptor
         recyclerView?.layoutManager = LinearLayoutManager(this)
         val sortOptions = arrayOf(
@@ -120,5 +120,10 @@ private lateinit var binding: ActivityMainBinding
 
     private fun getQueryForNameOrDescription(name:String):String{
         return "$name in:name,in:description";
+    }
+
+    override fun onCardClicked(data: Repository) {
+        val fragment = CardDialogFragment.newInstance(data)
+        fragment.show(supportFragmentManager, "MyFragment")
     }
 }
